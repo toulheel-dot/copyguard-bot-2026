@@ -1,0 +1,51 @@
+python-telegram-bot==20.3
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+import os
+import datetime
+
+BOT_TOKEN = os.environ.get("8248564201:AAE-JnZnV04WLp5nPvfIAj2H3h_oql6qkmM")
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Hello! I am your CopyGuardBot. Use /report1 or /report2 to generate copyright reports.")
+
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Use /report1 to generate a report with current date.\nUse /report2 to generate a report with custom time ranges.")
+
+async def report1(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    today = datetime.date.today().strftime("%d %B %Y")
+    text = f"""Dear Meta Team,
+
+The reported video contains my copyrighted material that has been used without my permission.
+...
+My original content was posted by me on {today}.
+The reported content was uploaded later by another user.
+
+I respectfully request the removal of this infringing content under copyright law.
+"""
+    await update.message.reply_text(text)
+
+async def report2(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if len(context.args) < 2:
+        await update.message.reply_text("Usage: /report2 <original_time> <reported_time>")
+        return
+    original_time = context.args[0]
+    reported_time = context.args[1]
+    text = f"""Dear Meta Team,
+
+The reported video contains my copyrighted material that has been used without my permission.
+The infringing user has copied a portion of my original content as well as my original audio without any authorization. In my original video, this content appears from {original_time}. whereas in the reported video it has been used from {reported_time}.
+
+This content is clearly copied from my original work and reused without authorization.
+"""
+    await update.message.reply_text(text)
+
+app = ApplicationBuilder().token(BOT_TOKEN).build()
+
+app.add_handler(CommandHandler("start", start))
+app.add_handler(CommandHandler("help", help_command))
+app.add_handler(CommandHandler("report1", report1))
+app.add_handler(CommandHandler("report2", report2))
+
+print("Bot is running...")
+app.run_polling()
