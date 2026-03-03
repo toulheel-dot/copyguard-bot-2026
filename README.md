@@ -1,0 +1,1 @@
+# copyguard-bot-2026
